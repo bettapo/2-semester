@@ -12,6 +12,7 @@ typedef struct dinArr{
 
 /*The function calculates the required number of cells multiple of 2
 to accommodate a specified number of elements.*/
+//It is not clear yet whether this function is needed separately.
 int dinArr_calcSizeMalloc (int quantity)
 {
     int sizeMalloc = 1;
@@ -32,6 +33,19 @@ dinArr* dinArr_CreateNew()
     return ptrOnNew;
 }
 
+dinArr* dinArr_add(dinArr* prevArr)
+{
+    int quantityAdd;
+    printf("Enter the dimensions of the array: ");
+    scanf("%d", &quantityAdd);
+
+    if (prevArr->capacity < (prevArr->size + quantityAdd))
+    {
+
+    }
+
+}
+
 int main()
 {
     int sizeOfArray;
@@ -44,9 +58,12 @@ int main()
     printf("%d\n", nesseraryMemory);
 
     dinArr* curDinArr;
-    curDinArr = dinArr_CreateNew;
+    curDinArr = dinArr_CreateNew();
+
+    /*Makes the array longer.*/
     curDinArr->arr = (int*)malloc(dinArr_calcSizeMalloc(sizeOfArray) * sizeof(int));
     curDinArr->capacity = dinArr_calcSizeMalloc(sizeOfArray);
+    /**/
 
     int i;
     for (i = 0; i<sizeOfArray; i++)
