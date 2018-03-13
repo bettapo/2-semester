@@ -45,8 +45,10 @@ dinArr* dinArr_add(dinArr* prevArr)
     if (prevArr->capacity < requiredSize)
     {
         dinArr* longerArr = dinArr_createNew();
-        longerArr->arr = malloc(dinArr_calcSizeMalloc(requiredSize)*sizeof(longerArr->sizeItem));
+        longerArr->sizeItem = sizeof(int); //temporary line
+        longerArr->arr = malloc(dinArr_calcSizeMalloc(requiredSize)*(longerArr->sizeItem));
         longerArr->capacity = dinArr_calcSizeMalloc(requiredSize);
+
         printf("Capacity: %d\n", longerArr->capacity);
 
         int i;
@@ -74,32 +76,23 @@ dinArr* dinArr_add(dinArr* prevArr)
         }
 
         longerArr->size = prevArr->size;
-        for (i = prevArr->size; i < requiredSize; i++)
+
+        void* cp = longerArr->arr;
+        int k;
+        for (k = prevArr->size; k < requiredSize; k++)
         {
-            /*Stopgap measure. It is necessary to implement different input functions.*/
-            int tmp;
-            scanf("%d", &tmp);
-            printf("Before copying: %d\n", tmp);
-            /**/
-            if (i>0)
-            {
-                void* itemPtr = &longerArr->arr[i-1];
-                printf("previous item: %d\n", itemPtr);
-            }
+            int cin;
+            printf("Enter data: ");
+            scanf("%d", &cin);
 
-
-            memcpy(&longerArr->arr[i], &tmp, sizeof(tmp));
-            free(&tmp);
-            if (i>0)
-            {
-                void* itemPtr = &longerArr->arr[i-1];
-                printf("previous item: %d\n", itemPtr);
-            }
-
-
+            printf("Number of cell: %d\n", cp); //Проверка номера ячейки памяти
+            memcpy(cp, &cin, longerArr->sizeItem);
             longerArr->size++;
+            cp += longerArr->sizeItem;
+            printf("Number of cell: %d\n", cp); //Проверка номера ячейки памяти
+
             int j;
-            for (j = 0; j < longerArr->size; j++)
+            for (j = 0; j < longerArr->size*longerArr->sizeItem; j+=longerArr->sizeItem)
             {
                 printf("Cell: %d, ", &longerArr->arr[j]);
                 void* intPtr = &longerArr->arr[j];
@@ -107,14 +100,20 @@ dinArr* dinArr_add(dinArr* prevArr)
                 k = intPtr;
                 printf("Cell contents: %d\n", *k);
             }
+            printf("\n");
         }
-        for (i = 0; i < longerArr->size; i++)
+
+        int j;
+        for (j = 0; j < longerArr->size*longerArr->sizeItem; j+=longerArr->sizeItem)
         {
-            void* intPtr = &longerArr->arr[i];
+            printf("Cell: %d, ", &longerArr->arr[j]);
+            void* intPtr = &longerArr->arr[j];
             int *k;
             k = intPtr;
-            printf("%d ", *k);
+            printf("Cell contents: %d\n", *k);
         }
+        printf("\n");
+
         return longerArr;
     }
     else
@@ -199,15 +198,12 @@ int main()
 
 
                 curDinArr = dinArr_add(curDinArr);
-                int i;
-                int* A;
-                A = (int*)curDinArr->arr;
-                printf("Array elements: \n");
-                for (i = 0; i < curDinArr->size; i++)
-                    printf("%d ", A[i]);
 
-                printf("my variant\n");
-                for (i = 0; i < curDinArr->size; i++) {
+                printf("\n");
+                printf("Temporary test\n");
+                int i;
+                for(i = 0; i < curDinArr->size*curDinArr->sizeItem; i+=curDinArr->sizeItem )
+                    {
                     void* intPtr = &curDinArr->arr[i];
                     int *k;
                     k = intPtr;
