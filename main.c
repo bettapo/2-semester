@@ -58,7 +58,7 @@ dinArr* dinArr_add(dinArr* prevArr)
             //int tmp = (int*)prevArr->arr[i];
             printf("Before copying: %d\n", elemPtr);
             memcpy(&longerArr->arr[i], &prevArr->arr[i], prevArr->sizeItem);
-            free(&prevArr->arr[i]);
+            //free(&prevArr->arr[i]);
             printf("Cell: %d, ", &longerArr->arr[i]);
             void* intPtr = &longerArr->arr[i];
             int *k;
@@ -144,21 +144,28 @@ dinArr* dinArr_add(dinArr* prevArr)
 dinArr* dinArr_concatenation (dinArr* arrA, dinArr* arrB)
 {
     int requiredSize = arrA->size + arrB->size;
-    printf("%d\n", requiredSize);
+    printf("Size of concatenation array: %d\n", requiredSize);
 
     if(arrA->capacity < requiredSize)
     {
         dinArr* newA = dinArr_createNew();
-        newA->arr = malloc(dinArr_calcSizeMalloc(requiredSize)*sizeof(int));
+        newA->arr = malloc(dinArr_calcSizeMalloc(requiredSize)*sizeof(arrA->sizeItem));
+        newA->sizeItem = sizeof(int); //temporary line
         newA->capacity = dinArr_calcSizeMalloc(requiredSize);
         printf("%d\n", newA->capacity);
 
+        int lastCell;
         int i;
-        for (i = 0; i < arrA->size; i++)
-            memcpy(&newA->arr[i], &arrA->arr[i], sizeof(arrA->arr[i]));
-        newA->size = arrA->size;
-        for (i = newA->size; i < requiredSize; i++)
-            memcpy(&newA->arr[i], &arrB->arr[i-newA->size], sizeof(arrB->arr[i-newA->size]));
+        for (i = 0; i < arrA->size*arrA->sizeItem; i+=arrA->sizeItem)
+        {
+            memcpy(&newA->arr[i], &arrA->arr[i], arrA->sizeItem);
+            lastCell = &newA->arr[i];
+        }
+
+        lastCell += newA->sizeItem;
+        for (i = 0; i < arrB->size*newA->sizeItem; i+=newA->sizeItem)
+            memcpy(lastCell+i, &arrB->arr[i], newA->sizeItem);
+
         newA->size = requiredSize;
 
         return newA;
@@ -166,8 +173,16 @@ dinArr* dinArr_concatenation (dinArr* arrA, dinArr* arrB)
     else
     {
         int i;
-        for(i = arrA->size; i < requiredSize; i++)
-            memcpy(&arrA->arr[i], &arrB->arr[i-arrA->size], sizeof(arrB->arr[i-arrA->size]));
+        //Think of a better solution
+        int lastCell;
+        for(i = 0; i < arrA->size*arrA->sizeItem; i += arrA->sizeItem)
+            lastCell = &arrA->arr[i];
+        lastCell += arrA->sizeItem;
+        //
+
+        for(i = 0; i < arrB->size*arrB->sizeItem; i += arrB->sizeItem)
+            memcpy(lastCell+i, &arrB->arr[i], arrA->sizeItem);
+
         arrA->size = requiredSize;
 
         return arrA;
@@ -230,7 +245,7 @@ int main()
                 int* A;
                 A = (int*)arrA->arr;
                 for (i = 0; i < arrA->size; i++)
-                    printf("%d", A[i]);
+                    printf("%d ", A[i]);
 
                 printf("\n");
             }
